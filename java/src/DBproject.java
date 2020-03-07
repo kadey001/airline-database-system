@@ -300,13 +300,116 @@ public class DBproject{
 	}//end readChoice
 
 	public static void AddPlane(DBproject esql) {//1
+/*
+	id INTEGER NOT NULL,
+	make CHAR(32) NOT NULL,
+	model CHAR(64) NOT NULL,
+	age _YEAR_1970 NOT NULL,
+	seats _SEATS NOT NULL,
+*/
+		try{
+			System.out.print("Plane ID: \n");
+			String plane_input = in.readLine();
+			System.out.print("Plane make: \n");
+			String make = in.readLine();
+			System.out.print("Plane model: \n");
+			String model = in.readLine();
+			System.out.print("Plane age: \n");
+			String p_age = in.readLine();
+			System.out.print("Plane number of seats: \n");
+			String seat_num = in.readLine();
+			// Done asking user for info
+
+			int plane_int = Integer.parseInt(plane_input);
+			
+			String query = "INSERT INTO Plane(id,make,model,age,seats)\n"
+						    +"VALUES(" 
+							+ plane_int
+							+ ", '" + make 
+							+ "', '" + model
+							+ "', " + p_age
+							+ ", " + seat_num + " );";
+			//System.out.print(query);
+			esql.executeUpdate(query);
+      	}catch(Exception e){
+         	System.err.println (e.getMessage());
+		}
 	}
 
 	public static void AddPilot(DBproject esql) {//2
+		try{
+			System.out.print("Pilot ID: \n");
+			String pilot_input = in.readLine();
+			System.out.print("Pilot fullname: \n");
+			String fullname = in.readLine();
+			System.out.print("Pilot Nationality: \n");
+			String nationality = in.readLine();
+			// Done asking user for info
+
+			int pilot_id = Integer.parseInt(pilot_input);
+			
+			String query = "INSERT INTO Pilot\n"
+						    +"VALUES(" 
+							+ pilot_id
+							+ ", '" + fullname 
+							+ "', '" + nationality + "' );";
+			//System.out.print(query);
+			esql.executeUpdate(query);
+      	}catch(Exception e){
+         	System.err.println (e.getMessage());
+		}
 	}
 
 	public static void AddFlight(DBproject esql) {//3
 		// Given a pilot, plane and flight, adds a flight in the DB
+		try{
+			System.out.print("Flight num: \n");
+			String flight_num = in.readLine(); // make int
+			System.out.print("Flight cost: \n");
+			String cost = in.readLine(); // make int
+			System.out.print("Number sold: \n");
+			String sold = in.readLine(); // make int
+			System.out.print("Number of stops: \n");
+			String stops = in.readLine(); // make int
+			System.out.print("Departure year: \n");
+			String dyear = in.readline();
+			System.out.print("Departure month: \n");
+			String dmonth = in.readline();
+			System.out.print("Departure day: \n");
+			String dday = in.readline();
+			System.out.print("Departure hour: \n");
+			String dhour = in.readline();
+			System.out.print("Departure minutes: \n");
+			String dmin = in.readline();
+			String depart_date = dyear + "-" + dmonth + "-" + dday +" " + dhour +":" +dmin;
+			
+			System.out.print("Arrival date: \n");
+			String arrival_date = in.readLine();
+			System.out.print("Arrival airport: \n");
+			String arrival_airport = in.readLine();	
+			System.out.print("Departure airport: \n");
+			String dep_airport = in.readLine();	
+			// Done asking user for info
+
+			int fnum_int = Integer.parseInt(flight_num);
+			int cost_int = Integer.parseInt(cost);
+			int sold_int = Integer.parseInt(sold);
+			int stops_int = Integer.parseInt(stops);
+			
+			String query = "INSERT INTO Flight\n"
+						    +"VALUES(" 
+							+ fnum_int
+							+ ", " + cost_int 
+							+ ", " + sold_int
+							+ ", " + stops_int
+							+ ", '" + depart_date
+							+ "' ,'" + arrival_date
+							+ "' ,'" + dep_airport + "' );";
+			//System.out.print(query);
+			esql.executeUpdate(query);
+      	}catch(Exception e){
+         	System.err.println (e.getMessage());
+		}
 	}
 
 	public static void AddTechnician(DBproject esql) {//4
