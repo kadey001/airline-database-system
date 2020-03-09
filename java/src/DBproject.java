@@ -382,9 +382,19 @@ public class DBproject{
 			System.out.print("Departure minutes: \n");
 			String dmin = in.readline();
 			String depart_date = dyear + "-" + dmonth + "-" + dday +" " + dhour +":" +dmin;
-			
-			System.out.print("Arrival date: \n");
-			String arrival_date = in.readLine();
+
+			System.out.print("Arrival year: \n");
+			String ayear = in.readline();
+			System.out.print("Arrival month: \n");
+			String amonth = in.readline();
+			System.out.print("Arrival day: \n");
+			String aday = in.readline();
+			System.out.print("Arrival hour: \n");
+			String ahour = in.readline();
+			System.out.print("Arrival minutes: \n");
+			String amin = in.readline();
+			String arrival_date = ayear + "-" + amonth + "-" + aday +" " + ahour +":" +amin;
+
 			System.out.print("Arrival airport: \n");
 			String arrival_airport = in.readLine();	
 			System.out.print("Departure airport: \n");
@@ -413,6 +423,25 @@ public class DBproject{
 	}
 
 	public static void AddTechnician(DBproject esql) {//4
+			
+		try{
+			System.out.print("Technician ID: \n");
+			String tech_input = in.readLine();
+			System.out.print("Technician fullname: \n");
+			String tech_fname = in.readLine();
+			// Done asking user for info
+
+			int tech_int = Integer.parseInt(tech_input);
+			
+			String query = "INSERT INTO Plane(id,make,model,age,seats)\n"
+						    +"VALUES(" 
+							+ tech_int
+							+ ", '" + tech_fname + " );";
+			//System.out.print(query);
+			esql.executeUpdate(query);
+      	}catch(Exception e){
+         	System.err.println (e.getMessage());
+		}
 	}
 
 	public static void BookFlight(DBproject esql) {//5
