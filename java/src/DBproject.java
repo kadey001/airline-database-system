@@ -372,15 +372,15 @@ public class DBproject{
 			System.out.print("Number of stops: \n");
 			String stops = in.readLine(); // make int
 			System.out.print("Departure year: \n");
-			String dyear = in.readline();
+			String dyear = in.readLine();
 			System.out.print("Departure month: \n");
-			String dmonth = in.readline();
+			String dmonth = in.readLine();
 			System.out.print("Departure day: \n");
-			String dday = in.readline();
+			String dday = in.readLine();
 			System.out.print("Departure hour: \n");
-			String dhour = in.readline();
+			String dhour = in.readLine();
 			System.out.print("Departure minutes: \n");
-			String dmin = in.readline();
+			String dmin = in.readLine();
 			String depart_date = dyear + "-" + dmonth + "-" + dday +" " + dhour +":" +dmin;
 			
 			System.out.print("Arrival date: \n");
