@@ -127,11 +127,49 @@ public class DBproject{
 		return rnum;
 	}
 	
-	public boolean isFlightFull(String flight_id) throws SQLException {
+	public boolean isFlightFull(String flightID) throws SQLException {
+		//creates a statement object
+		Statement stmt = this._connection.createStatement ();
+		
 		//Get the plane flying
+		String query = "SELECT plane_id FROM FlightInfo WHERE fiid = " + flightID + ";";
+		//issue the query instruction and store result
+		ResultSet rs = stmt.executeQuery (query);
+		rs.next();
+		String planeID = rs.getString(1);
+		
 		//Get number of seats on the plane
-		//Check flight num_sold
-		//If number of seats >= num_sold return true, else false
+		query = "SELECT seats FROM Plane WHERE id = " + planeID + ";";
+		//issue the query instruction and store result
+		rs = stmt.executeQuery (query);
+		
+		rs.next();
+		String seatsStr = rs.getString(1);
+		int numOfSeatsOnPlane = Integer.parseInt(seatsStr); 
+		
+		//Get flight num_sold
+		query = "SELECT num_sold FROM Flight WHERE fnum = " + flightID + ";";
+		//issue the query instruction and store result
+		rs = stmt.executeQuery (query);
+		
+		rs.next();
+		String numSeatsSoldStr = rs.getString(1);
+		int numSeatsSold = Integer.parseInt(numSeatsSoldStr);
+		
+		//System.out.print("Plane ID: " + planeID + "\n");
+		//System.out.print("Seats Sold: " + numSeatsSold + "\n");
+		//System.out.print("Total Seats: " + numOfSeatsOnPlane + "\n");
+		//If number of seats >= num_sold return true, else increment num_sold and return false
+		if(numSeatsSold >= numOfSeatsOnPlane) {
+			System.out.print("Full" + "\n");
+			return true;
+		} else {
+			//System.out.print("Not Full" + "\n");
+			query = "UPDATE Flight SET num_sold = num_sold + 1 WHERE fnum = " + flightID + ";";
+			//issue the query instruction then return false
+			stmt.executeUpdate(query);
+			return false;
+		}
 	}
 	
 	/**
@@ -472,10 +510,9 @@ public class DBproject{
 			String customer_id = in.readLine();
 			System.out.print("flight number: \n");
 			String flight_num = in.readLine();
-			System.out.print("Paid? (Y/N): \n");
+			System.out.print("Paid? (y/n): \n");
 			String paid = in.readLine();
 			//All info aquired
-			
 			//Get last reservation number and increment by 1
 			int reservationNum = esql.getReservationNumber() + 1;
 			
@@ -486,20 +523,29 @@ public class DBproject{
 			
 			if(flightFull) {
 				status = "W";
-			} else if(paid == "Y") {
-				status = "C";
 			} else {
-				status = "R";
+				switch(paid) {
+					case "y":
+						status = "C";
+						break;
+					default:
+						status = "R";
+						break;
+				}
 			}
 			
+			//System.out.print("RNUM: " + reservationNum + "\n");
+			//System.out.print("Status: " + status + "\n");
 			//Create query to make reservation
-			String query = "INSERT INTO Reservation(rnum, cid, fid, status)\n" 
+			String query = "INSERT INTO Reservation(rnum, cid, fid, status) \n" 
 							+ "VALUES("
-							+ rnum + ", "
+							+ reservationNum + ", "
 							+ customer_id + ", "
-							+ fid + ", "
-							+ status + ");";
+							+ flight_num + ", "
+							+ "'" + status + "'" + ");";
 							
+			esql.executeUpdate(query);
+			System.out.print("Reservation (" + status + ") added with reservation #: " + reservationNum + "\n");
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
 		}
