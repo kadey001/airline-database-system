@@ -113,6 +113,12 @@ public class DBproject{
 		return rowCount;
 	}
 	
+	/**
+	 * Method to get the last reservation number in the database to
+	 * ensure that each new reservation has a unique 
+	 * 
+	 * @return integer of the last reservation number
+	 */
 	public int getReservationNumber () throws SQLException {
 		//creates a statement object
 		Statement stmt = this._connection.createStatement ();
@@ -127,6 +133,12 @@ public class DBproject{
 		return rnum;
 	}
 	
+	/**
+	 * Method to check if the currently looked at flight is fully booked
+	 * 
+	 * @param flight ID
+	 * @return true if flight is full, false if flight is not yet full
+	 */ 
 	public boolean isFlightFull(String flightID) throws SQLException {
 		//creates a statement object
 		Statement stmt = this._connection.createStatement ();
