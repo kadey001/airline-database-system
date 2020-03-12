@@ -382,9 +382,19 @@ public class DBproject{
 			System.out.print("Departure minutes: \n");
 			String dmin = in.readLine();
 			String depart_date = dyear + "-" + dmonth + "-" + dday +" " + dhour +":" +dmin;
-			
-			System.out.print("Arrival date: \n");
-			String arrival_date = in.readLine();
+
+			System.out.print("Arrival year: \n");
+			String ayear = in.readLine();
+			System.out.print("Arrival month: \n");
+			String amonth = in.readLine();
+			System.out.print("Arrival day: \n");
+			String aday = in.readLine();
+			System.out.print("Arrival hour: \n");
+			String ahour = in.readLine();
+			System.out.print("Arrival minutes: \n");
+			String amin = in.readLine();
+			String arrival_date = ayear + "-" + amonth + "-" + aday +" " + ahour +":" +amin;
+
 			System.out.print("Arrival airport: \n");
 			String arrival_airport = in.readLine();	
 			System.out.print("Departure airport: \n");
@@ -413,6 +423,25 @@ public class DBproject{
 	}
 
 	public static void AddTechnician(DBproject esql) {//4
+			
+		try{
+			System.out.print("Technician ID: \n");
+			String tech_input = in.readLine();
+			System.out.print("Technician fullname: \n");
+			String tech_fname = in.readLine();
+			// Done asking user for info
+
+			int tech_int = Integer.parseInt(tech_input);
+			
+			String query = "INSERT INTO Plane(id,make,model,age,seats)\n"
+						    +"VALUES(" 
+							+ tech_int
+							+ ", '" + tech_fname + " );";
+			//System.out.print(query);
+			esql.executeUpdate(query);
+      	}catch(Exception e){
+         	System.err.println (e.getMessage());
+		}
 	}
 
 	public static void BookFlight(DBproject esql) {//5
@@ -421,6 +450,28 @@ public class DBproject{
 
 	public static void ListNumberOfAvailableSeats(DBproject esql) {//6
 		// For flight number and date, find the number of availalbe seats (i.e. total plane capacity minus booked seats )
+		try{
+			System.out.print("Flight num: \n");
+			String fnum_str = in.readLine();
+			System.out.print("Flight year: \n");
+			String year = in.readLine();
+			System.out.print("Flight month: \n");
+			String month = in.readLine();
+			System.out.print("Flight day: \n");
+			String day = in.readLine();
+			// Done asking user for info
+			
+			String user_date = year + "-" + month + "-" + day;
+			int user_fnum = Integer.parseInt(fnum_str);
+		String query = 		"SELECT P.seats - F.num_sold as seats_available, F.actual_departure_date "
+						+	"FROM Flight F, Plane P, Schedule S "
+						+	"WHERE P.id = F.fnum " //+ user_date need to fix date
+						+	" AND F.fnum IN (SELECT F2.fnum FROM Flight F2 WHERE F2.fnum = " + user_fnum + ") "
+						+	"GROUP BY seats_available, F.actual_departure_date" ;
+		 esql.executeQueryAndPrintResult(query);
+		}catch(Exception e){
+         	System.err.println (e.getMessage());
+		}
 	}
 
 	public static void ListsTotalNumberOfRepairsPerPlane(DBproject esql) {//7
@@ -429,6 +480,17 @@ public class DBproject{
 
 	public static void ListTotalNumberOfRepairsPerYear(DBproject esql) {//8
 		// Count repairs per year and list them in ascending order
+		try{
+			//"SELECT EXTRACT(YEAR from R.repair_date) as year, COUNT(R.rid) "
+		String query = "SELECT EXTRACT(YEAR from R.repair_date) as year, COUNT(R.rid) "
+						+ "FROM Repairs R "
+						+ "GROUP BY year "
+						+ "ORDER BY year asc ;"; 
+		
+		 esql.executeQueryAndPrintResult(query);
+		}catch(Exception e){
+         	System.err.println (e.getMessage());
+		}
 	}
 	
 	public static void FindPassengersCountWithStatus(DBproject esql) {//9
