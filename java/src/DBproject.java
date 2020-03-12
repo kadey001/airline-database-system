@@ -113,6 +113,27 @@ public class DBproject{
 		return rowCount;
 	}
 	
+	public int getReservationNumber () throws SQLException {
+		//creates a statement object
+		Statement stmt = this._connection.createStatement ();
+
+		String query = "SELECT MAX(rnum) FROM Reservation;";
+		//issues the query instruction
+		ResultSet rs = stmt.executeQuery (query);
+		
+		rs.next();
+		String rnumStr = rs.getString(1);
+		int rnum = Integer.parseInt(rnumStr);
+		return rnum;
+	}
+	
+	public boolean isFlightFull(String flight_id) throws SQLException {
+		//Get the plane flying
+		//Get number of seats on the plane
+		//Check flight num_sold
+		//If number of seats >= num_sold return true, else false
+	}
+	
 	/**
 	 * Method to execute an input query SQL instruction (i.e. SELECT).  This
 	 * method issues the query to the DBMS and returns the results as
@@ -446,6 +467,42 @@ public class DBproject{
 
 	public static void BookFlight(DBproject esql) {//5
 		// Given a customer and a flight that he/she wants to book, add a reservation to the DB
+		try {
+			System.out.print("customer id: \n");
+			String customer_id = in.readLine();
+			System.out.print("flight number: \n");
+			String flight_num = in.readLine();
+			System.out.print("Paid? (Y/N): \n");
+			String paid = in.readLine();
+			//All info aquired
+			
+			//Get last reservation number and increment by 1
+			int reservationNum = esql.getReservationNumber() + 1;
+			
+			//Check if flight is full
+			boolean flightFull = esql.isFlightFull(flight_num);
+			
+			String status = "";
+			
+			if(flightFull) {
+				status = "W";
+			} else if(paid == "Y") {
+				status = "C";
+			} else {
+				status = "R";
+			}
+			
+			//Create query to make reservation
+			String query = "INSERT INTO Reservation(rnum, cid, fid, status)\n" 
+							+ "VALUES("
+							+ rnum + ", "
+							+ customer_id + ", "
+							+ fid + ", "
+							+ status + ");";
+							
+		} catch(Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	public static void ListNumberOfAvailableSeats(DBproject esql) {//6
