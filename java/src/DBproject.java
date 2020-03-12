@@ -118,6 +118,7 @@ public class DBproject{
 	 * ensure that each new reservation has a unique 
 	 * 
 	 * @return integer of the last reservation number
+	 * @throws java.sql.SQLException when failed to execute the query
 	 */
 	public int getReservationNumber () throws SQLException {
 		//creates a statement object
@@ -138,6 +139,7 @@ public class DBproject{
 	 * 
 	 * @param flight ID
 	 * @return true if flight is full, false if flight is not yet full
+	 * @throws java.sql.SQLException when failed to execute the query
 	 */ 
 	public boolean isFlightFull(String flightID) throws SQLException {
 		//creates a statement object
@@ -591,6 +593,16 @@ public class DBproject{
 
 	public static void ListsTotalNumberOfRepairsPerPlane(DBproject esql) {//7
 		// Count number of repairs per planes and list them in descending order
+		try {
+			
+			String query = "SELECT plane_id, COUNT(*) AS NumOfRepairs \n" 
+						+ "FROM Repairs GROUP BY plane_id \n"
+						+ "ORDER BY NumOfRepairs DESC;";
+			
+			esql.executeQueryAndPrintResult(query);
+		} catch(Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	public static void ListTotalNumberOfRepairsPerYear(DBproject esql) {//8
