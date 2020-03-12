@@ -414,7 +414,8 @@ public class DBproject{
 							+ ", " + stops_int
 							+ ", '" + depart_date
 							+ "' ,'" + arrival_date
-							+ "' ,'" + dep_airport + "' );";
+							+ "' ,'" + arrival_airport 
+							+ "' ,'" + dep_airport +"');";
 			//System.out.print(query);
 			esql.executeUpdate(query);
       	}catch(Exception e){
@@ -433,10 +434,10 @@ public class DBproject{
 
 			int tech_int = Integer.parseInt(tech_input);
 			
-			String query = "INSERT INTO Plane(id,make,model,age,seats)\n"
+			String query = "INSERT INTO Technician\n"
 						    +"VALUES(" 
 							+ tech_int
-							+ ", '" + tech_fname + " );";
+							+ ", '" + tech_fname + "' );";
 			//System.out.print(query);
 			esql.executeUpdate(query);
       	}catch(Exception e){
@@ -459,15 +460,21 @@ public class DBproject{
 			String month = in.readLine();
 			System.out.print("Flight day: \n");
 			String day = in.readLine();
+			System.out.print("Flight hour: \n");
+			String hour = in.readLine();
+			System.out.print("Flight minute: \n");
+			String min = in.readLine();
 			// Done asking user for info
 			
-			String user_date = year + "-" + month + "-" + day;
+			String user_date = year + "-" + month + "-" + day + " " + hour + ":" +min;
+			System.out.println(user_date);
 			int user_fnum = Integer.parseInt(fnum_str);
-		String query = 		"SELECT P.seats - F.num_sold as seats_available, F.actual_departure_date "
-						+	"FROM Flight F, Plane P, Schedule S "
-						+	"WHERE P.id = F.fnum " //+ user_date need to fix date
-						+	" AND F.fnum IN (SELECT F2.fnum FROM Flight F2 WHERE F2.fnum = " + user_fnum + ") "
-						+	"GROUP BY seats_available, F.actual_departure_date" ;
+		String query = 		"SELECT P.seats - F.num_sold as seats_available, F.actual_departure_date as departure_date_and_time "
+						+	"FROM Flight F, Plane P, FlightInfo FI "
+						+	"WHERE P.id = FI.plane_id AND F.actual_departure_date = '" + user_date + "'"
+						+    " AND F.fnum = FI.flight_id "
+						//+	" ND F.fnum IN (SELECT F2.fnum FROM Flight F2 WHERE F2.fnum = " + user_fnum + ") "
+						+	"GROUP BY seats_available, F.actual_departure_date;" ;
 		 esql.executeQueryAndPrintResult(query);
 		}catch(Exception e){
          	System.err.println (e.getMessage());
