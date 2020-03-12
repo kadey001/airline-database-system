@@ -218,3 +218,31 @@ COPY Schedule (
 )
 FROM 'schedule.csv'
 WITH DELIMITER ',';
+
+
+------
+--- TEST
+---- DELETE LATER
+---- Using this area to test sql
+SELECT EXTRACT(YEAR from R.repair_date) as year, COUNT(R.rid)
+FROM Repairs R
+GROUP BY year
+ORDER BY year asc;
+
+-- // For flight number and date, 
+-- find the number of availalbe seats 
+-- (i.e. total plane capacity minus booked seats)
+--
+-- Plane(	id, make, model, age, seats)
+-- Flight( 	fnum, num_sold, actual_departure_date)
+-- Flight_info (fiid, flight_id, pilot_id, plane_id)
+-- Schedule (id, flightNum, departure_time, arrival_time)
+
+SELECT P.seats - F.num_sold as seats_available, F.actual_departure_date
+FROM Flight F, Plane P, Schedule S
+WHERE P.id = F.fnum AND F.actual_departure_date = '2014-05-01' -- date will be users input
+				AND F.fnum IN (SELECT F2.fnum
+				FROM Flight F2
+				WHERE F2.fnum = 0) -- 0 will be users input
+GROUP BY seats_available, F.actual_departure_date;
+
