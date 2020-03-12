@@ -300,15 +300,8 @@ public class DBproject{
 	}//end readChoice
 
 	public static void AddPlane(DBproject esql) {//1
-/*
-	id INTEGER NOT NULL,
-	make CHAR(32) NOT NULL,
-	model CHAR(64) NOT NULL,
-	age _YEAR_1970 NOT NULL,
-	seats _SEATS NOT NULL,
-*/
 		try{
-			System.out.print("Plane ID: \n");
+			System.out.print("Plane ID (make sure this doesn't already exist): \n");
 			String plane_input = in.readLine();
 			System.out.print("Plane make: \n");
 			String make = in.readLine();
@@ -338,7 +331,7 @@ public class DBproject{
 
 	public static void AddPilot(DBproject esql) {//2
 		try{
-			System.out.print("Pilot ID: \n");
+			System.out.print("Pilot ID (make sure this doesn't already exist): \n");
 			String pilot_input = in.readLine();
 			System.out.print("Pilot fullname: \n");
 			String fullname = in.readLine();
@@ -363,7 +356,7 @@ public class DBproject{
 	public static void AddFlight(DBproject esql) {//3
 		// Given a pilot, plane and flight, adds a flight in the DB
 		try{
-			System.out.print("Flight num: \n");
+			System.out.print("Flight num (make sure this doesn't already exist): \n");
 			String flight_num = in.readLine(); // make int
 			System.out.print("Flight cost: \n");
 			String cost = in.readLine(); // make int
@@ -373,25 +366,25 @@ public class DBproject{
 			String stops = in.readLine(); // make int
 			System.out.print("Departure year: \n");
 			String dyear = in.readLine();
-			System.out.print("Departure month: \n");
+			System.out.print("Departure month (min. 2 digits): \n");
 			String dmonth = in.readLine();
-			System.out.print("Departure day: \n");
+			System.out.print("Departure day (min. 2 digits): \n");
 			String dday = in.readLine();
-			System.out.print("Departure hour: \n");
+			System.out.print("Departure hour (min. 2 digits): \n");
 			String dhour = in.readLine();
-			System.out.print("Departure minutes: \n");
+			System.out.print("Departure minutes (min. 2 digits): \n");
 			String dmin = in.readLine();
 			String depart_date = dyear + "-" + dmonth + "-" + dday +" " + dhour +":" +dmin;
 
 			System.out.print("Arrival year: \n");
 			String ayear = in.readLine();
-			System.out.print("Arrival month: \n");
+			System.out.print("Arrival month (min. 2 digits): \n");
 			String amonth = in.readLine();
-			System.out.print("Arrival day: \n");
+			System.out.print("Arrival day (min. 2 digits): \n");
 			String aday = in.readLine();
-			System.out.print("Arrival hour: \n");
+			System.out.print("Arrival hour (min. 2 digits): \n");
 			String ahour = in.readLine();
-			System.out.print("Arrival minutes: \n");
+			System.out.print("Arrival minutes (min. 2 digits): \n");
 			String amin = in.readLine();
 			String arrival_date = ayear + "-" + amonth + "-" + aday +" " + ahour +":" +amin;
 
@@ -418,6 +411,21 @@ public class DBproject{
 							+ "' ,'" + dep_airport +"');";
 			//System.out.print(query);
 			esql.executeUpdate(query);
+			
+			// Now to fill in flightInfo
+			System.out.print("Flight Info ID (make sure this doesn't already exist): \n");
+			String finfo_id = in.readLine(); // make int
+			System.out.print("Pilot ID (Make sure it matches an existing pilot): \n");
+			String pilot_id = in.readLine();
+			System.out.print("Plane ID(Make sure it matches an existing plane ID): \n");
+			String plane_id = in.readLine();
+			String query2 = "INSERT INTO FlightInfo\n"
+						    +"VALUES(" 
+							+ finfo_id
+							+ ", " + fnum_int
+							+ ", " + pilot_id
+							+ ", '" + plane_id +"');";
+			esql.executeUpdate(query2);
       	}catch(Exception e){
          	System.err.println (e.getMessage());
 		}
@@ -426,7 +434,7 @@ public class DBproject{
 	public static void AddTechnician(DBproject esql) {//4
 			
 		try{
-			System.out.print("Technician ID: \n");
+			System.out.print("Technician ID (make sure this doesn't already exist): \n");
 			String tech_input = in.readLine();
 			System.out.print("Technician fullname: \n");
 			String tech_fname = in.readLine();
@@ -452,29 +460,33 @@ public class DBproject{
 	public static void ListNumberOfAvailableSeats(DBproject esql) {//6
 		// For flight number and date, find the number of availalbe seats (i.e. total plane capacity minus booked seats )
 		try{
+			System.out.print("Make sure all input exists in the database\n");
 			System.out.print("Flight num: \n");
 			String fnum_str = in.readLine();
-			System.out.print("Flight year: \n");
+			System.out.print("Flight year (atleast 4 digits): \n");
 			String year = in.readLine();
-			System.out.print("Flight month: \n");
+			System.out.print("Flight month (atleast 2 digits): \n");
 			String month = in.readLine();
-			System.out.print("Flight day: \n");
+			System.out.print("Flight day (atleast 2 digits): \n");
 			String day = in.readLine();
-			System.out.print("Flight hour: \n");
+			System.out.print("Flight hour (atleast 2 digits): \n");
 			String hour = in.readLine();
-			System.out.print("Flight minute: \n");
+			System.out.print("Flight minute (atleast 2 digits): \n");
 			String min = in.readLine();
 			// Done asking user for info
 			
 			String user_date = year + "-" + month + "-" + day + " " + hour + ":" +min;
-			System.out.println(user_date);
+			//System.out.println(user_date);
+			
 			int user_fnum = Integer.parseInt(fnum_str);
-		String query = 		"SELECT P.seats - F.num_sold as seats_available, F.actual_departure_date as departure_date_and_time "
+			String query = 	"SELECT P.seats - F.num_sold as seats_available, F.actual_departure_date as departure_date_and_time "
 						+	"FROM Flight F, Plane P, FlightInfo FI "
-						+	"WHERE P.id = FI.plane_id AND F.actual_departure_date = '" + user_date + "'"
-						+    " AND F.fnum = FI.flight_id "
-						//+	" ND F.fnum IN (SELECT F2.fnum FROM Flight F2 WHERE F2.fnum = " + user_fnum + ") "
-						+	"GROUP BY seats_available, F.actual_departure_date;" ;
+						+	"WHERE P.id = FI.plane_id AND F.actual_departure_date = '" + user_date + "' "
+						// P.id = Flightinfo Pid to find correct plane seats
+						// Adding user date to find the date of the flight
+						+   "AND F.fnum = FI.flight_id AND F.fnum = " + user_fnum 
+						// They must equal each other bc the flightid references flight num
+						+	" GROUP BY seats_available, F.actual_departure_date;" ;
 		 esql.executeQueryAndPrintResult(query);
 		}catch(Exception e){
          	System.err.println (e.getMessage());
