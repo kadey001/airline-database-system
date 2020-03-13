@@ -81,6 +81,7 @@ Immediately runs query to grab all repairs for each year
 
 ## Find passengers count with status
 Ask user for:
+- Flight ID
 - Status
 
-Finds the total number of passengers with a reservation given a specific status
+Finds the total number of passengers with a reservation given a specific status and flight
