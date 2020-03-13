@@ -642,12 +642,19 @@ public class DBproject{
 	public static void FindPassengersCountWithStatus(DBproject esql) {//9
 		// Find how many passengers there are with a status (i.e. W,C,R) and list that number.
 		try {
+			System.out.print("Flight ID: \n");
+			String flightID = in.readLine();
 			System.out.print("Select status (W/C/R): \n");
 			String status = in.readLine();
 			
-			String query = "SELECT COUNT(*) AS NumberOfPassengers FROM Reservation WHERE status = '" + status + "';";
+			if(status.equals("W") || status.equals("C") || status.equals("R")) {
+				String query = "SELECT COUNT(*) AS NumberOfPassengers FROM Reservation WHERE status = '" + status + "'"
+						+ "AND fid = " + flightID + ";";
 			
-			esql.executeQueryAndPrintResult(query);
+				esql.executeQueryAndPrintResult(query);
+			} else {
+				System.out.print("Invalid status \n");
+			}
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
 		}
