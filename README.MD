@@ -46,6 +46,18 @@ Ask user for:
 
 Updates technician table
 
+## Book Flight
+Ask user for:
+- Customer ID
+- Flight Number
+- Paid Status (Y/N)
+
+Creates a new reservation with status based on whether the plane is full and the paid status
+
+## List total number of repairs per plane
+
+Lists out number of repairs per plane in descending order
+
 ## List number of available seats
 Asks user for:
 - Flight num
@@ -66,3 +78,9 @@ Immediately runs query to grab all repairs for each year
 1. Organizes the date by first grabbing the year from the date
 2. Counts the number of repairs within that year
 3. Groups by year in ascending order
+
+## Find passengers count with status
+Ask user for:
+- Status
+
+Finds the total number of passengers with a reservation given a specific status
