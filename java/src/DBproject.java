@@ -114,6 +114,79 @@ public class DBproject{
 	}
 	
 	/**
+	 * Method to get the last reservation number in the database to
+	 * ensure that each new reservation has a unique 
+	 * 
+	 * @return integer of the last reservation number
+	 * @throws java.sql.SQLException when failed to execute the query
+	 */
+	public int getReservationNumber () throws SQLException {
+		//creates a statement object
+		Statement stmt = this._connection.createStatement ();
+
+		String query = "SELECT MAX(rnum) FROM Reservation;";
+		//issues the query instruction
+		ResultSet rs = stmt.executeQuery (query);
+		
+		rs.next();
+		String rnumStr = rs.getString(1);
+		int rnum = Integer.parseInt(rnumStr);
+		return rnum;
+	}
+	
+	/**
+	 * Method to check if the currently looked at flight is fully booked
+	 * 
+	 * @param flight ID
+	 * @return true if flight is full, false if flight is not yet full
+	 * @throws java.sql.SQLException when failed to execute the query
+	 */ 
+	public boolean isFlightFull(String flightID) throws SQLException {
+		//creates a statement object
+		Statement stmt = this._connection.createStatement ();
+		
+		//Get the plane flying
+		String query = "SELECT plane_id FROM FlightInfo WHERE fiid = " + flightID + ";";
+		//issue the query instruction and store result
+		ResultSet rs = stmt.executeQuery (query);
+		rs.next();
+		String planeID = rs.getString(1);
+		
+		//Get number of seats on the plane
+		query = "SELECT seats FROM Plane WHERE id = " + planeID + ";";
+		//issue the query instruction and store result
+		rs = stmt.executeQuery (query);
+		
+		rs.next();
+		String seatsStr = rs.getString(1);
+		int numOfSeatsOnPlane = Integer.parseInt(seatsStr); 
+		
+		//Get flight num_sold
+		query = "SELECT num_sold FROM Flight WHERE fnum = " + flightID + ";";
+		//issue the query instruction and store result
+		rs = stmt.executeQuery (query);
+		
+		rs.next();
+		String numSeatsSoldStr = rs.getString(1);
+		int numSeatsSold = Integer.parseInt(numSeatsSoldStr);
+		
+		//System.out.print("Plane ID: " + planeID + "\n");
+		//System.out.print("Seats Sold: " + numSeatsSold + "\n");
+		//System.out.print("Total Seats: " + numOfSeatsOnPlane + "\n");
+		//If number of seats >= num_sold return true, else increment num_sold and return false
+		if(numSeatsSold >= numOfSeatsOnPlane) {
+			System.out.print("Full" + "\n");
+			return true;
+		} else {
+			//System.out.print("Not Full" + "\n");
+			query = "UPDATE Flight SET num_sold = num_sold + 1 WHERE fnum = " + flightID + ";";
+			//issue the query instruction then return false
+			stmt.executeUpdate(query);
+			return false;
+		}
+	}
+	
+	/**
 	 * Method to execute an input query SQL instruction (i.e. SELECT).  This
 	 * method issues the query to the DBMS and returns the results as
 	 * a list of records. Each record in turn is a list of attribute values
@@ -455,6 +528,50 @@ public class DBproject{
 
 	public static void BookFlight(DBproject esql) {//5
 		// Given a customer and a flight that he/she wants to book, add a reservation to the DB
+		try {
+			System.out.print("customer id: \n");
+			String customer_id = in.readLine();
+			System.out.print("flight number: \n");
+			String flight_num = in.readLine();
+			System.out.print("Paid? (y/n): \n");
+			String paid = in.readLine();
+			//All info aquired
+			//Get last reservation number and increment by 1
+			int reservationNum = esql.getReservationNumber() + 1;
+			
+			//Check if flight is full
+			boolean flightFull = esql.isFlightFull(flight_num);
+			
+			String status = "";
+			
+			if(flightFull) {
+				status = "W";
+			} else {
+				switch(paid) {
+					case "y":
+						status = "C";
+						break;
+					default:
+						status = "R";
+						break;
+				}
+			}
+			
+			//System.out.print("RNUM: " + reservationNum + "\n");
+			//System.out.print("Status: " + status + "\n");
+			//Create query to make reservation
+			String query = "INSERT INTO Reservation(rnum, cid, fid, status) \n" 
+							+ "VALUES("
+							+ reservationNum + ", "
+							+ customer_id + ", "
+							+ flight_num + ", "
+							+ "'" + status + "'" + ");";
+							
+			esql.executeUpdate(query);
+			System.out.print("Reservation (" + status + ") added with reservation #: " + reservationNum + "\n");
+		} catch(Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	public static void ListNumberOfAvailableSeats(DBproject esql) {//6
@@ -495,6 +612,16 @@ public class DBproject{
 
 	public static void ListsTotalNumberOfRepairsPerPlane(DBproject esql) {//7
 		// Count number of repairs per planes and list them in descending order
+		try {
+			
+			String query = "SELECT plane_id, COUNT(*) AS NumOfRepairs \n" 
+						+ "FROM Repairs GROUP BY plane_id \n"
+						+ "ORDER BY NumOfRepairs DESC;";
+			
+			esql.executeQueryAndPrintResult(query);
+		} catch(Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	public static void ListTotalNumberOfRepairsPerYear(DBproject esql) {//8
@@ -514,5 +641,15 @@ public class DBproject{
 	
 	public static void FindPassengersCountWithStatus(DBproject esql) {//9
 		// Find how many passengers there are with a status (i.e. W,C,R) and list that number.
+		try {
+			System.out.print("Select status (W/C/R): \n");
+			String status = in.readLine();
+			
+			String query = "SELECT COUNT(*) AS NumberOfPassengers FROM Reservation WHERE status = '" + status + "';";
+			
+			esql.executeQueryAndPrintResult(query);
+		} catch(Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 }
