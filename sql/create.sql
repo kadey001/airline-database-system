@@ -51,8 +51,8 @@ CREATE TABLE Flight
 	cost _PINTEGER NOT NULL,
 	num_sold _PZEROINTEGER NOT NULL,
 	num_stops _PZEROINTEGER NOT NULL,
-	actual_departure_date DATE NOT NULL,
-	actual_arrival_date DATE NOT NULL,
+	actual_departure_date TIMESTAMP NOT NULL,
+	actual_arrival_date TIMESTAMP NOT NULL,
 	arrival_airport CHAR(5) NOT NULL,-- AIRPORT CODE --
 	departure_airport CHAR(5) NOT NULL,-- AIRPORT CODE --
 	PRIMARY KEY (fnum)
@@ -120,8 +120,8 @@ CREATE TABLE Schedule
 (
 	id INTEGER NOT NULL,
 	flightNum INTEGER NOT NULL,
-	departure_time DATE NOT NULL,
-	arrival_time DATE NOT NULL,
+	departure_time timestamp NOT NULL,
+	arrival_time timestamp NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (flightNum) REFERENCES Flight(fnum)
 );
@@ -218,3 +218,43 @@ COPY Schedule (
 )
 FROM 'schedule.csv'
 WITH DELIMITER ',';
+
+
+------
+--- TEST
+---- DELETE LATER
+---- Using this area to test sql
+SELECT EXTRACT(YEAR from R.repair_date) as year, COUNT(R.rid)
+FROM Repairs R
+GROUP BY year
+ORDER BY year asc;
+
+-- // For flight number and date, 
+-- find the number of availalbe seats 
+-- (i.e. total plane capacity minus booked seats)
+--
+-- Plane(	id, make, model, age, seats)
+-- Flight( 	fnum, num_sold, actual_departure_date)
+-- Flight_info (fiid, flight_id, pilot_id, plane_id)
+-- Schedule (id, flightNum, departure_time, arrival_time)
+
+/*
+SELECT P.seats - F.num_sold as seats_available, F.actual_departure_date
+FROM Flight F, Plane P, Schedule S
+WHERE P.id = F.fnum AND F.actual_departure_date = '2014-05-01' -- date will be users input
+				AND F.fnum IN (SELECT F2.fnum
+				FROM Flight F2
+				WHERE F2.fnum = 0) -- 0 will be users input
+GROUP BY seats_available, F.actual_departure_date;
+
+SELECT P.seats - F.num_sold as seats_available, F.actual_departure_date as "departure date and time"
+FROM Flight F, Plane P, FlightInfo FI
+WHERE P.id = FI.plane_id AND F.actual_departure_date = '2014-05-07 14:58' AND F.fnum = FI.flight_id
+GROUP BY seats_available, F.actual_departure_date;
+
+
+SELECT S.arrival_time
+FROM Schedule S, Flight F
+WHERE F.fnum = S.flightNum AND F.fnum = 0;
+
+*/
